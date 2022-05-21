@@ -6,3 +6,4 @@ I created this repo with the purpose of learning crypto / blockchain by trying t
 * ...
 
 The best way to learn something is just to do it knowing that you would fail.
+https://chronusyopodentio.github.io/
