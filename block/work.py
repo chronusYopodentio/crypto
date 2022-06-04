@@ -2,6 +2,7 @@
 import struct
 import random
 import hashlib
+import binascii
 from utils import Utils
 '''
 Hashcash cost-function
@@ -40,20 +41,29 @@ def sha(x) -> bytes:
 	return h.digest()
 
 def infix_comp(a:bytes , b: bytes, w:int) -> bool: 
-	if a[0:w] == b[0:w]:
+	str_a = binascii.hexlify(a).decode()
+	str_b = binascii.hexlify(b).decode()
+	
+	if str_a[0:w] == str_b[0:w]:
 		return True
 	return False
 def MINT(s: bytes, w: int) -> (bytes, bytes):
+	nonce = 0
 	while True:
-		x = bytes([random.randint(0,255) for i in range(16)])
+		x = struct.pack('i', nonce)
 		hashIn = s + x
 		hashOut = sha(hashIn)
 		if infix_comp(hashOut, bytes(32), w):
-			return (s,x)
+			return (s,nonce)
+
+		nonce += 1
+		#print(binascii.hexlify(x).decode())
 def VALUE(s, token):
 	return sha(s + token)
 
-util = Utils()
-myToken = MINT(UNIQUE, 3)[1]
-print(util.b2s(VALUE(UNIQUE, myToken)))
+if __name__ == '__main__':
+	util = Utils()
+	myToken = MINT(UNIQUE, 5)[1]
+	print(hex(myToken))
+	print(util.b2s(VALUE(UNIQUE, struct.pack('i', myToken))))
 
